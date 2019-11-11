@@ -387,7 +387,7 @@ public class PortfolioOverviewController implements Controller {
      */
     @FXML
     private void onBuyButtonClicked() {
-        if (validInputs()) {
+        if (validInputs(true)) {
             disableButtons();
 
             TransactionRecord transactionRecord = createTransactionRecord(true);
@@ -401,7 +401,7 @@ public class PortfolioOverviewController implements Controller {
      */
     @FXML
     private void onSellButtonClicked() {
-        if (validInputs()) {
+        if (validInputs(false)) {
             disableButtons();
 
             TransactionRecord transactionRecord = createTransactionRecord(false);
@@ -415,7 +415,7 @@ public class PortfolioOverviewController implements Controller {
      */
     @FXML
     private void onDividendButtonClicked() {
-        if (validInputs()) {
+        if (validInputs(true)) {
             disableButtons();
 
             DividendRecord dividendRecord = createDividendRecord();
@@ -516,13 +516,14 @@ public class PortfolioOverviewController implements Controller {
      *
      * @return True if they are valid; return false otherwise.
      */
-    private boolean validInputs() {
+    private boolean validInputs(boolean isBuy) {
         String ticker = tickerInput.getText();
         String amount = amountInput.getText();
         String numShares = numSharesInput.getText();
         boolean validInputs = true;
 
-        if (ticker == null || ticker.length() == 0) {
+        if (ticker == null || ticker.length() == 0 || ticker.length() > 4
+                || (!isBuy && !stockRecords.containsKey(ticker))) {
             showTickerInputError();
             validInputs = false;
             invalidTickerInput = true;
@@ -530,20 +531,45 @@ public class PortfolioOverviewController implements Controller {
             showTickerInputNormal();
         }
 
-        if (amount == null || amount.length() == 0) {
+        try {
+            if (amount.charAt(0) == '$') {
+                amount = amount.substring(1);
+            }
+
+            double amountVal = Double.parseDouble(amount);
+
+            if (amountVal <= 0) {
+                showAmountInputError();
+                invalidAmountInput = true;
+                validInputs = false;
+            } else {
+                showAmountInputNormal();
+            }
+        } catch (Exception ex) {
             showAmountInputError();
-            validInputs = false;
             invalidAmountInput = true;
-        } else {
-            showAmountInputNormal();
+            validInputs = false;
         }
 
-        if (numShares == null || numShares.length() == 0) {
+        try {
+            if (numShares.charAt(0) == '$') {
+                numShares = numShares.substring(1);
+            }
+
+            double numSharesVal = Double.parseDouble(numShares);
+            PortfolioRecord.Allocation allocation = portRecord.getAllocations().get(ticker);
+
+            if (numSharesVal <= 0 || (allocation != null && allocation.getNumShares() < numSharesVal)) {
+                showNumSharesError();
+                invalidNumSharesInput = true;
+                validInputs = false;
+            } else {
+                showNumSharesNormal();
+            }
+        } catch (Exception ex) {
             showNumSharesError();
-            validInputs = false;
             invalidNumSharesInput = true;
-        } else {
-            showNumSharesNormal();
+            validInputs = false;
         }
 
         LocalDate date = transactionDatePicker.getValue();
@@ -652,13 +678,15 @@ public class PortfolioOverviewController implements Controller {
     private void setOverviewValues() {
         if (portRecord.getHistory().size() > 0) {
             double currPortfolioValue = portRecord.getCurrPortValue();
-            double currAmountInvested = portRecord.getCurrMoneyInvested();
-            double totProfits = currPortfolioValue - currAmountInvested;
-            double totReturn = (currPortfolioValue - currAmountInvested) / currAmountInvested * 100;
+            double currAmountInvested = portRecord.getCurrMoneyInvested() < 0 ? 0 : portRecord.getCurrMoneyInvested();
+            double totProfits = portRecord.getCurrMoneyInvested() < 0 ? currPortfolioValue
+                    + Math.abs(portRecord.getCurrMoneyInvested()) : currPortfolioValue - currAmountInvested;
+            double totReturn = portRecord.getCurrMoneyInvested() < 0
+                    ? Double.MAX_VALUE : (currPortfolioValue - currAmountInvested) / currAmountInvested * 100;
             String currPortfolioValueStr = Utils.formatDollars(currPortfolioValue);
             String currAmountInvestedStr = Utils.formatDollars(currAmountInvested);
             String totProfitsStr = Utils.formatDollars(totProfits);
-            String totReturnStr = Utils.formatPercentage(totReturn);
+            String totReturnStr = totReturn == Double.MAX_VALUE ? "-" : Utils.formatPercentage(totReturn);
             SimpleDateFormat dateFormat = new SimpleDateFormat("M/d/yyyy h:mm a");
 
             portfolioValue.setText(currPortfolioValueStr);
@@ -696,7 +724,9 @@ public class PortfolioOverviewController implements Controller {
                 totalProfits.setStyle("-fx-text-fill: #ff4c00;");
             }
 
-            if (totReturn >= 0) {
+            if (totReturn == Double.MAX_VALUE) {
+                totalReturn.setStyle("-fx-text-fill: white;");
+            } else if (totReturn >= 0.0) {
                 if (totReturnStr.equals("0.00%")) {
                     totalReturn.setStyle("-fx-text-fill: white;");
                 } else {
