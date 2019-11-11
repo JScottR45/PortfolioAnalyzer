@@ -1,0 +1,23 @@
+.button {
+    -fx-background-color: transparent;
+    -fx-text-fill: #33d6ff;
+    -fx-font-family: "heiti tc";
+    -fx-font-size: 15;
+    -fx-border-color: #33d6ff;
+    -fx-border-radius: 5;
+    -fx-background-radius: 5;
+}
+
+.button:pressed {
+    -fx-background-color: #33d6ff;
+    -fx-text-fill: black;
+}
+
+.button:released {
+    -fx-background-color: transparent;
+    -fx-text-fill: #33d6ff;
+}
+
+.button:hover {
+    -fx-border-width: 1.5;
+}

@@ -1,0 +1,54 @@
+.table-view {
+    -fx-table-cell-border-color: #33d6ff;
+    -fx-background-color: transparent;
+}
+
+.table-row-cell {
+    -fx-background-color: black;
+}
+
+.table-cell {
+    -fx-text-fill: white;
+    -fx-font-size: 15;
+    -fx-font-family: "heiti tc";
+    -fx-padding: 5 0 5 10;
+}
+
+.table-view .column-header .label {
+    -fx-font-size: 16;
+    -fx-font-family: "heiti tc";
+    -fx-text-fill: #33d6ff;
+    -fx-background-color: black;
+}
+
+.table-view .column-header, .table-view .filler {
+    -fx-background-color: black;
+}
+
+.table-view .scroll-bar {
+    -fx-background-color: transparent;
+    -fx-pref-width: 7;
+}
+
+.table-view .scroll-bar .thumb {
+    -fx-background-color: #33d6ff;
+}
+
+.table-view .scroll-bar .decrement-button {
+    -fx-background-color: black;
+}
+
+.table-view .scroll-bar .increment-button {
+    -fx-background-color: black;
+}
+
+.table-view .scroll-bar .increment-arrow {
+    -fx-background-color: #4d4d4d;
+}
+
+.table-view .scroll-bar .decrement-arrow {
+    -fx-background-color: #4d4d4d;
+}
+
+
+

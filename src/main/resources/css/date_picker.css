@@ -1,0 +1,77 @@
+.date-picker > .text-field {
+     -fx-background-color: black;
+     -fx-border-color: #4d4d4d;
+     -fx-border-radius: 5;
+     -fx-prompt-text-fill: #33d6ff;
+     -fx-text-fill: #33d6ff;
+     -fx-font:  15px "heiti tc";
+}
+
+.date-picker > .arrow-button {
+    -fx-background-color: black;
+}
+
+.date-picker > .arrow-button > .arrow {
+    -fx-background-color: #33d6ff;
+}
+
+.date-picker {
+     -fx-background-color: black;
+}
+
+.date-picker-popup {
+    -fx-background-color: #33d6ff;
+}
+
+.date-picker-popup > .month-year-pane {
+    -fx-background-color: black;
+    -fx-pref-height: 40;
+}
+
+.date-picker-popup > * > .spinner > .label {
+    -fx-text-fill: #33d6ff;
+}
+
+.date-picker-popup > * > .spinner > .button {
+    -fx-border-color: black;
+}
+
+.date-picker-popup > * > .spinner > .button:armed {
+    -fx-background-color: black;
+}
+
+.date-picker-popup > * > .spinner > .button:armed > .left-arrow {
+    -fx-background-color: #ff4c00;
+}
+
+.date-picker-popup > * > .spinner > .button:armed > .right-arrow {
+    -fx-background-color: #ff4c00;
+}
+
+.date-picker-popup > .calendar-grid {
+    -fx-background-color: black;
+}
+
+.date-picker-popup > * > .date-cell {
+    -fx-background-color: black;
+    -fx-text-fill: #33d6ff;
+    -fx-border-color: #4d4d4d;
+}
+
+.date-picker-popup > * > .date-cell:hover {
+    -fx-text-fill: #ff4c00;
+}
+
+.date-picker-popup > * > .date-cell:pressed {
+    -fx-background-color: #33d6ff;
+    -fx-text-fill: black;
+}
+
+.date-picker-popup > * > .day-name-cell:hover {
+    -fx-text-fill: #33d6ff;
+}
+
+.date-picker-popup > * > .day-name-cell:pressed {
+    -fx-text-fill: #33d6ff;
+    -fx-background-color: black;
+}

@@ -1,0 +1,21 @@
+.chart-pie-label-line {
+    -fx-stroke: white;
+    -fx-fill: white;
+}
+
+.chart-pie-label {
+    -fx-fill: white;
+    -fx-font-family: "heiti tc";
+    -fx-font-size: 15;
+}
+
+.default-color0.chart-pie { -fx-pie-color: #80e5ff; }
+.default-color1.chart-pie { -fx-pie-color: #33d6ff; }
+.default-color2.chart-pie { -fx-pie-color: #00b8e6; }
+.default-color3.chart-pie { -fx-pie-color: #007a99; }
+.default-color4.chart-pie { -fx-pie-color: #003d4d; }
+.default-color5.chart-pie { -fx-pie-color: #e699ff; }
+.default-color6.chart-pie { -fx-pie-color: #d580ff; }
+.default-color7.chart-pie { -fx-pie-color: #c44dff; }
+.default-color8.chart-pie { -fx-pie-color: #aa00ff; }
+.default-color9.chart-pie { -fx-pie-color: #7700b3; }

@@ -1,0 +1,20 @@
+.chart-plot-background {
+    -fx-background-color: transparent;
+}
+
+.axis {
+    -fx-tick-label-fill: white;
+    -fx-font-family: "heiti tc";
+    -fx-minor-tick-visible: false;
+    -fx-stroke-width: 2;
+}
+
+.chart-horizontal-grid-lines {
+    -fx-stroke: #4d4d4d;
+}
+
+.chart-horizontal-zero-line {
+    -fx-stroke-width: 2;
+}
+
+.default-color0.chart-series-line { -fx-stroke: #33d6ff; }
