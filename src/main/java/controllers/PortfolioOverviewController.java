@@ -195,9 +195,11 @@ public class PortfolioOverviewController implements Controller {
         if (ex != null) {
             switch(ex.getType()) {
                 case NOT_FOUND:
+                    System.out.println("Ticker symbol not found.");
                     showTickerInputError();
                     break;
                 case INVALID_TRANSACTION_DATE:
+                    System.out.println("Invalid transaction date.");
                     showTransactionDatePickerError();
                     break;
                 case MISC:
@@ -239,6 +241,11 @@ public class PortfolioOverviewController implements Controller {
 
         boolean isBuy = transactionRecord.isBuy();
         TransactionRecord undoTransactionRecord;
+
+        if (!isBuy) {
+            showProgressIndicators();
+            disableButtons();
+        }
 
         if (transactionRecord.getType() == RecordType.DIVIDEND_RECORD) {
             undoTransactionRecord = new DividendRecord(transactionRecord.getDate(), transactionRecord.getTicker(),
@@ -372,7 +379,7 @@ public class PortfolioOverviewController implements Controller {
      */
     @FXML
     private void onRefreshButtonClicked() {
-        if (portRecord.getHistory().size() > 0) {
+        if (portRecord.getHistory().size() > 0 && stockRecords.size() > 0) {
             System.out.println("Refreshing data...");
 
             disableButtons();
@@ -620,7 +627,7 @@ public class PortfolioOverviewController implements Controller {
         showProgressIndicators();
 
         if (!stockRecords.containsKey(transactionRecord.getTicker())) {
-            if (portRecord.getHistory().size() > 0) {
+            if (portRecord.getHistory().size() > 0 && stockRecords.size() > 0) {
                 waitingTransaction = transactionRecord;
                 performanceManager.initialize(portRecord, stockRecords, true, false);
             } else {
@@ -778,6 +785,7 @@ public class PortfolioOverviewController implements Controller {
         sellButton.setDisable(true);
         dividendButton.setDisable(true);
         refreshButton.setDisable(true);
+        transactionsManager.disableUndoButtons();
     }
 
     /**
@@ -788,6 +796,7 @@ public class PortfolioOverviewController implements Controller {
         sellButton.setDisable(false);
         dividendButton.setDisable(false);
         refreshButton.setDisable(false);
+        transactionsManager.enableUndoButtons();
     }
 
     /**

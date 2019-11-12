@@ -60,7 +60,7 @@ public class StatsManager {
      * @param updateUI True if the caller wants the stats tables to be updated visually after initialization; false otherwise.
      */
     public void initialize(PortfolioRecord portRecord, Map<String, StockRecord> stockDataRecords, boolean updateUI) {
-        if (portRecord.getHistory().size() == 0) {
+        if (portRecord.getHistory().size() == 0 || stockDataRecords.size() == 0) {
             overviewController.statsManagerFinished(false);
             return;
         }

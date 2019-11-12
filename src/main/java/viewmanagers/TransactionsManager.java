@@ -21,6 +21,8 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import utils.Utils;
 
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
@@ -113,7 +115,7 @@ public class TransactionsManager {
             String ticker = transactionRecord.getTicker();
 
             if (!stockDataRecords.containsKey(ticker)) {
-                fetchNewStockData(portRecord, stockDataRecords, transactionRecords, transactionRecord);
+                fetchNewStockData(portRecord, stockDataRecords, transactionRecords, transactionRecord, isUndo);
             } else {
                 PAException ex = updateHistories(portRecord, stockDataRecords, transactionRecords, transactionRecord, isUndo);
                 notifyOverviewController(transactionRecord, ex);
@@ -121,6 +123,24 @@ public class TransactionsManager {
         });
 
         thread.start();
+    }
+
+    /**
+     * Disables the "Undo" button for each row in the transactions table.
+     */
+    public void disableUndoButtons() {
+        for (TableRow tableRow : transactionsTable.getItems()) {
+            tableRow.getUndoButton().setDisable(true);
+        }
+    }
+
+    /**
+     * Enables the "Undo" button for each row in the transactions table.
+     */
+    public void enableUndoButtons() {
+        for (TableRow tableRow : transactionsTable.getItems()) {
+            tableRow.getUndoButton().setDisable(false);
+        }
     }
 
     /**
@@ -151,9 +171,9 @@ public class TransactionsManager {
      * @param transactionRecord The transaction record which contains all relevant data for this transaction.
      */
     private void fetchNewStockData(PortfolioRecord portRecord, Map<String, StockRecord> stockDataRecords,
-                                   List<TransactionRecord> transactionRecords, TransactionRecord transactionRecord) {
+                                   List<TransactionRecord> transactionRecords, TransactionRecord transactionRecord, boolean isUndo) {
         StockDataFetcher stockDataFetcher = new StockDataFetcher();
-        HistoricalStockDataCallback callback = new HistoricalStockDataCallback(portRecord, stockDataRecords, transactionRecords, transactionRecord);
+        HistoricalStockDataCallback callback = new HistoricalStockDataCallback(portRecord, stockDataRecords, transactionRecords, transactionRecord, isUndo);
         List<String> ticker = new ArrayList<>();
 
         ticker.add(transactionRecord.getTicker());
@@ -318,6 +338,25 @@ public class TransactionsManager {
      */
     private void undoTransaction(TransactionRecord transactionRecord) {
         ObservableList<TableRow> tableRows = transactionsTable.getItems();
+        DecimalFormat df = new DecimalFormat("#.####");
+        double numShares = 0;
+
+        for (TableRow tableRow : tableRows) {
+            TransactionRecord record = tableRow.getTransactionRecord();
+
+            if (record.isBuy()) {
+                numShares += record.getNumShares();
+            } else {
+                numShares -= record.getNumShares();
+            }
+        }
+
+        df.setRoundingMode(RoundingMode.FLOOR);
+        String roundedNumShares = df.format(numShares);
+
+        if (transactionRecord.isBuy() && (roundedNumShares.equals("0") || roundedNumShares.equals("-0"))) {
+            return;
+        }
 
         for (int i = tableRows.size() - 1; i >= 0; i--) {
             if (transactionRecord.equals(tableRows.get(i).getTransactionRecord())) {
@@ -410,6 +449,7 @@ public class TransactionsManager {
         private Map<String, StockRecord> stockDataRecords;
         private List<TransactionRecord> transactionRecords;
         private TransactionRecord transactionRecord;
+        private boolean isUndo;
 
         /**
          * Initializes class member variables.
@@ -420,11 +460,12 @@ public class TransactionsManager {
          * @param transactionRecord The transaction record containing all relevant data for the transaction just made.
          */
         HistoricalStockDataCallback(PortfolioRecord portRecord, Map<String, StockRecord> stockDataRecords,
-                                    List<TransactionRecord> transactionRecords, TransactionRecord transactionRecord) {
+                                    List<TransactionRecord> transactionRecords, TransactionRecord transactionRecord, boolean isUndo) {
             this.portRecord = portRecord;
             this.stockDataRecords = stockDataRecords;
             this.transactionRecords = transactionRecords;
             this.transactionRecord = transactionRecord;
+            this.isUndo = isUndo;
         }
 
         @Override
@@ -441,7 +482,7 @@ public class TransactionsManager {
             stockRecord.addHistory(historicalStockData.getHistory());
             stockDataRecords.put(ticker, stockRecord);
 
-            PAException ex = updateHistories(portRecord, stockDataRecords, transactionRecords, transactionRecord, false);
+            PAException ex = updateHistories(portRecord, stockDataRecords, transactionRecords, transactionRecord, isUndo);
 
             if (ex != null) {
                 stockDataRecords.remove(ticker);

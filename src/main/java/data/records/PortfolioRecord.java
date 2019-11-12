@@ -102,7 +102,8 @@ public class PortfolioRecord implements Record {
 
     /**
      * Removes or adjusts an allocation of the portfolio. Occurs when selling an asset. In regards to selling an asset
-     * short, an allocation of this asset is actually added to the portfolio but with negative values.
+     * short, an allocation of this asset is actually added to the portfolio but with negative values (currently not
+     * allowed though).
      *
      * @param transactionRecord The transaction record containing all relevant information to adjust the
      * portfolio's allocation for the asset associated with the record.
